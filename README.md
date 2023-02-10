@@ -14,4 +14,5 @@ def pageTest(globalVar,args):
     return '<html><head><meta http-equiv="refresh" content="2"></head><body>test<br>counter = ' + str(server.globalVar.i)+ '</body></html>'
 
 server.pageFunctions['/test'] = pageTest
+
 server.pageFunctions['/'] = pageTest
