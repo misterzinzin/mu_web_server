@@ -26,6 +26,7 @@ class mu_web_server:
     def __init__(self):
         self.globalVar = webserver_global()
         self.pageFunctions = {}
+        self.staticWebFolder = ""
     def start(self):
         _thread.start_new_thread(self.doServe,())
     def doServe(self):
@@ -46,7 +47,7 @@ class mu_web_server:
         request = request.decode('utf-8')
         req = request.split('\n')[0]
         reqs = req.split()
-        if reqs[0] == 'GET' and reqs is not None and len(reqs) >= 2:
+        if reqs is not None and reqs[0] == 'GET' and len(reqs) >= 2:
             temp = reqs[1].split('?')
             page = temp[0]
             pageArgs = []
@@ -63,12 +64,12 @@ class mu_web_server:
                 conn.sendall(response)
             else:
                 
-                if webserver.file_exists(page):
+                if mu_web_server.file_exists(self.staticWebFolder + page):
                     #print("file exist")
                     conn.send('HTTP/1.1 200 OK\n')
                     conn.send('Content-Type: text/html\n')
                     conn.send('Connection: close\n\n')
-                    f = open(page,'rb')
+                    f = open(self.staticWebFolder + page,'rb')
                     while True:
                         bytes_read = f.read(1024)
                         if not bytes_read:
