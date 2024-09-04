@@ -7,6 +7,7 @@ import network
 import _thread
 import os
 import sys
+import gc#20240904 issue solve
 
 class webserver_global:
     pass
@@ -27,6 +28,7 @@ class mu_web_server:
         self.globalVar = webserver_global()
         self.pageFunctions = {}
         self.staticWebFolder = ""
+        self.header = "Access-Control-Allow-Origin: *"#20240904 added iframe support from all pages
     def start(self):
         _thread.start_new_thread(self.doServe,())
     def doServe(self):
@@ -59,6 +61,7 @@ class mu_web_server:
             if page in self.pageFunctions:
                 response = self.pageFunctions[page](self.globalVar,pageArgs)
                 conn.send('HTTP/1.1 200 OK\n')
+                conn.send(self.header)#20240904 added
                 conn.send('Content-Type: text/html\n')
                 conn.send('Connection: close\n\n')
                 conn.sendall(response)
@@ -67,6 +70,7 @@ class mu_web_server:
                 if mu_web_server.file_exists(self.staticWebFolder + page):
                     #print("file exist")
                     conn.send('HTTP/1.1 200 OK\n')
+                    conn.send(self.header)#20240904 added
                     conn.send('Content-Type: text/html\n')
                     conn.send('Connection: close\n\n')
                     f = open(self.staticWebFolder + page,'rb')
@@ -77,13 +81,14 @@ class mu_web_server:
                         conn.sendall(bytes_read)
                 else:
                     #print("file do not exists")
-                    response = webserver.web_page_404()
+                    response = mu_web_server.web_page_404()#20240904 issue solved
                     conn.send('HTTP/1.1 404 Not Found\n')
+                    conn.send(self.header)#20240904 added
                     conn.send('Content-Type: text/html\n')
                     conn.send('Connection: close\n\n')
                     conn.sendall(response)
         conn.close()
-          
+        gc.collect()#20240724 added  
 
     
       
