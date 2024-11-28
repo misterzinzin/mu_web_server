@@ -1,3 +1,4 @@
+#V20241128
 try:
   import usocket as socket
 except:
